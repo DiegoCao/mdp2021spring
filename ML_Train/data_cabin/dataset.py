@@ -37,8 +37,12 @@ def getAlldataset(task = "default", **kwargs):
 
     return tr, va, te, standardizer
 
+def resize(X):
+    """
+        resize according to a certain ratio:
+    """
 
-    
+    raise NotImplementedError
 
 class ImageStandardizer(object):
     """Standardize a batch of images to mean 0 and variance 1.
@@ -119,3 +123,5 @@ class CabinsDataset(Dataset):
 
 
 
+if __name__ == "__main__":
+    tr, va, te, standardizer = getAlldataset()

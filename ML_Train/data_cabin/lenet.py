@@ -6,5 +6,7 @@ import torch.nn.functional as F
 
 class Lenet(nn.Module):
     def __init__(self):
+        super.__init__()
+
+        self.conv1 = nn.Conv2d(in_channels = 1, )
         
-    

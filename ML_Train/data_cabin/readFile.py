@@ -63,9 +63,7 @@ def copyFile(file = "compile_mode.csv", targetPath = "./alldata"):
             true_label.append(mode)
             file_name.append(str(cnt).rjust(5, '0'))
             shutil.copyfile(file_path, new_name)
-            
 
-    
     Total_num = len(file_name)
     train_ratio, test_ratio, val_ratio = 0.8, 0.1, 0.1
     train_num = int(train_ratio*Total_num)
@@ -85,9 +83,6 @@ def copyFile(file = "compile_mode.csv", targetPath = "./alldata"):
     dataframe = pd.DataFrame({'filename':file_name, "numeric_label": true_label,"partition":partition, "Ruma": Ruma, "Nithin":Nithin,"Haomeng": Haomeng,
                 "David":David, "Andrea": Andrea})
     dataframe.to_csv("label_map.csv")
-    
-
-    
 
 
 if __name__ == "__main__":

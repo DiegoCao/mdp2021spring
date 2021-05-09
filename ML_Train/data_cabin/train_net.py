@@ -9,9 +9,30 @@ import utils
 from lenet import Lenet
 SEED = 0
 
+import os
+
 torch.manual_seed(SEED)
 np.random.seed(SEED)
 random.seed(SEED)
+
+def count_parameters(model):
+    """ count the number of learnable parameters"""
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+def save_checkpoint(model, epoch, checkpoint_dir, stats):
+    """Save a checkpoint file to `checkpoint_dir`."""
+    state = {
+        "epoch": epoch,
+        "state_dict": model.state_dict(),
+        "stats": stats,
+    }
+
+    filename = os.path.join(checkpoint_dir, "epoch={}.checkpoint.pth.tar".format(epoch))
+    torch.save(state, filename)
+
+
+
 
 
 def main():
