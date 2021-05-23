@@ -115,11 +115,20 @@ class CabinsDataset(Dataset):
             image = imread(os.path.join(PATH, row["filename"]))
             X.append(label)
             y.append(image)
-        
+
         return np.array(X), np.array(y)
 
     def get_numeric_label(self):
         return self.y
+
+
+    def get_semantic_label(self, numeric_label):
+        
+        """
+            return the physical meaning representation of the numeric class
+        """
+
+        raise NotImplementedError
 
 
 

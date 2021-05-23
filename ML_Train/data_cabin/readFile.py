@@ -53,11 +53,14 @@ def copyFile(file = "compile_mode.csv", targetPath = "./alldata"):
             David.append(int(info[5]))
             Andrea.append(int(info[6]))
             png = png.rjust(5,'0')
+            if video_name == "V_039_0027_290170":
+                break
             file_path = "./"+video_name+ "/Cabin/"+ png + ".png"
             if os.path.isfile(file_path) == False:
                 file_path = "./"+video_name+ "/Cabin/cabin"+ png + ".png"
             if os.path.isfile(file_path) == False:
                 file_path = "./"+video_name+ "/Cabin/scene"+ png + ".png"
+            
             new_name = targetPath + "/" +str(cnt).rjust(5, '0') + ".png"
             cnt += 1
             true_label.append(mode)

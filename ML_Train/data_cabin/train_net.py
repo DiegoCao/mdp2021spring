@@ -6,7 +6,7 @@ from dataset import get_train_val_test_loaders
 from train_common import *
 from utils import config
 import utils
-from lenet import Lenet
+from model import Source
 SEED = 0
 
 import os
@@ -44,10 +44,10 @@ def main():
     )
     print('successfully loading!')
 
-    model = Lenet()
+    model = Source()
     criterion = torch.nn.CrossEntropyLoss()
     # learbubg 
-    optimizer = torch.optim.Adam(Lenet.parameters(), lr = 0.001)
+    optimizer = torch.optim.Adam(Source.parameters(), lr = 0.001)
     print("Number of float-valued parameters:", count_parameters(model))
 
     model, start_epoch, stats = restore_checkpoint(model, config("cnn.checkpoint"))
