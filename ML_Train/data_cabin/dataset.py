@@ -28,10 +28,12 @@ def getAlldataset(task = "default", **kwargs):
     standardizer.fit(tr.X)
 
     tr.X = standardizer.transform(tr.X)
+
     va.X = standardizer.transform(va.X)
     te.X = standardizer.transform(te.X)
 
     tr.X = tr.X.transpose(0, 3, 1, 2)
+    print(tr.X.shape)
     va.X = va.X.transpose(0, 3, 1, 2)
     te.X = te.X.transpose(0, 3, 1, 2)
 
@@ -62,13 +64,12 @@ class ImageStandardizer(object):
 
     def fit(self, X):
         """Calculate per-channel mean and standard deviation from dataset X."""
-        # TODO: Complete this function
+
         self.image_mean = np.mean(X, axis = (0, 1, 2))
         self.image_std = np.std(X, axis = (0, 1, 2))
 
     def transform(self, X):
         """Return standardized dataset given dataset X."""
-        # TODO: Complete this function
 
         newX = (X - self.image_mean)/self.image_std
         return newX
@@ -102,6 +103,12 @@ class CabinsDataset(Dataset):
             print('loading data from csv file')
         
         self.X, self.y = self._load_data()
+        self.semantic_labels = dict(
+            zip(
+                self.metadata["numeric_label"],
+                self.metadata["semantic_label"],
+            )
+        )
 
     def _load_data(self):
         '''
@@ -112,23 +119,30 @@ class CabinsDataset(Dataset):
         X, y = [], []
         for i, row in df.iterrows():
             label = row["numeric_label"]
-            image = imread(os.path.join(PATH, row["filename"]))
-            X.append(label)
-            y.append(image)
+            image = imread(os.path.join(PATH, str(row["filename"])))
+            X.append(image)
+            y.append(label)
+
 
         return np.array(X), np.array(y)
+
+    def __len__(self):
+        """Return size of dataset."""
+        return len(self.X)
+    
+    def __getitem__(self, idx):
+        """Return (image, label) pair at index `idx` of dataset."""
+        return torch.from_numpy(self.X[idx]).float(), torch.tensor(self.y[idx]).long()
 
     def get_numeric_label(self):
         return self.y
 
 
     def get_semantic_label(self, numeric_label):
-        
+        """Return the string representation of the numeric class label.
         """
-            return the physical meaning representation of the numeric class
-        """
+        return self.semantic_labels[numeric_label]
 
-        raise NotImplementedError
 
 
 

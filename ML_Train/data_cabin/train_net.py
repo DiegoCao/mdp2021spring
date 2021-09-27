@@ -47,7 +47,7 @@ def main():
     model = Source()
     criterion = torch.nn.CrossEntropyLoss()
     # learbubg 
-    optimizer = torch.optim.Adam(Source.parameters(), lr = 0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr = 0.0001)
     print("Number of float-valued parameters:", count_parameters(model))
 
     model, start_epoch, stats = restore_checkpoint(model, config("cnn.checkpoint"))
@@ -55,7 +55,7 @@ def main():
     axes = utils.make_training_plot()
 
     evaluate_epoch(
-        axes, tr_loader, va_loader, te_loader, model, criterion, start_epoch, stats
+        axes, tr_loader, va_loader, te_loader, model, criterion, start_epoch, stats, multiclass=True
     )
 
         # initial val loss for early stopping
@@ -80,11 +80,11 @@ def main():
 
         # Evaluate model
         evaluate_epoch(
-            axes, tr_loader, va_loader, te_loader, model, criterion, epoch + 1, stats
+            axes, tr_loader, va_loader, te_loader, model, criterion, epoch + 1, stats, multiclass=True
         )
 
         # Save model parameters
-        save_checkpoint(model, epoch + 1, config("cnn.checkpoint"), stats)
+        save_checkpoint(model, epoch + 1, config("net.checkpoint"), stats)
 
         # update early stopping parameters
         curr_patience, prev_val_loss = early_stopping(

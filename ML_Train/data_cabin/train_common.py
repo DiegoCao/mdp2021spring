@@ -170,6 +170,7 @@ def evaluate_epoch(
             with torch.no_grad():
                 output = model(X)
                 predicted = predictions(output.data)
+                print('the predicted and the true: ', predicted, ' ', y)
                 y_true.append(y)
                 y_pred.append(predicted)
                 if not multiclass:
@@ -179,6 +180,7 @@ def evaluate_epoch(
                 total += y.size(0)
                 correct += (predicted == y).sum().item()
                 running_loss.append(criterion(output, y).item())
+                
         y_true = torch.cat(y_true)
         y_pred = torch.cat(y_pred)
         y_score = torch.cat(y_score)
