@@ -8,6 +8,7 @@ import torch
 from torch.nn.functional import softmax
 from sklearn import metrics
 import utils
+import wandb
 
 
 def count_parameters(model):
@@ -197,6 +198,11 @@ def evaluate_epoch(
     train_acc, train_loss, train_auc = _get_metrics(tr_loader)
     val_acc, val_loss, val_auc = _get_metrics(val_loader)
     test_acc, test_loss, test_auc = _get_metrics(te_loader)
+
+    wandb.log({"train_acc":train_acc, "train_loss": train_loss, "train_auc": train_auc, \
+                "val_acc":val_acc, "val_loss": val_loss, "val_auc": val_auc,
+                "test_acc":test_acc, "test_loss": test_loss, "test_auc": test_auc
+                }) 
 
     stats_at_epoch = [
         val_acc,
