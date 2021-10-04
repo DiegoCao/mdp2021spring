@@ -7,8 +7,8 @@ from matplotlib import pyplot as plt
 from imageio import imread
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
-FILEPATH = "label_map_manipulation.csv"
-PATH = "./alldata/"
+FILEPATH = "duplicate2_manipulation.csv"
+PATH = "./dupdata/"
 
 def get_train_val_test_loaders(task, batch_size, **kwargs):
 
