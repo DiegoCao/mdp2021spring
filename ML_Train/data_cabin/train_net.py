@@ -6,6 +6,7 @@ from dataset import get_train_val_test_loaders
 from train_common import *
 from utils import config
 import utils
+import wandb
 from model import Source
 SEED = 0
 
@@ -37,16 +38,23 @@ def save_checkpoint(model, epoch, checkpoint_dir, stats):
 
 def main():
 
+
+
     tr_loader, va_loader, te_loader, _ =  get_train_val_test_loaders(
         task = "default",
         batch_size = config("net.batch_size")
     )
+
+    filename = "trial"
+    lr = 0.0001
+    this_config = dict(csv_file=config["csv_file"], img_path=config["image_path"], learning_rate = lr, num_classes = 4, batchsize = 64)
+    wandb.init(project = "cabin_train", name = filename, config = this_config)
     print('successfully loading!')
 
     model = Source()
     criterion = torch.nn.CrossEntropyLoss()
 
-    optimizer = torch.optim.Adam(model.parameters(), lr = 0.0001)
+    optimizer = torch.optim.Adam(model.parameters(), lr = lr)
     print("Number of float-valued parameters:", count_parameters(model))
 
     model, start_epoch, stats = restore_checkpoint(model, config("cnn.checkpoint"))
