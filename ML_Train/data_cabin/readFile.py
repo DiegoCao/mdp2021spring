@@ -19,7 +19,7 @@ def readCsv(file = "Compile_.csv"):
     return Video_names, video_set
 
 import random 
-def copyFile(file = "/Users/hangruicao/Documents/mdp/mdp2021spring/ML_Train/V5_CabinCoding_CompiledData - Obj_Hand_Left.csv", targetPath = "./alldata"):
+def copyFile(file = "/Users/hangruicao/Documents/mdp/mdp2021spring/ML_Train/V5_CabinCoding_CompiledData - Manipulation.csv", targetPath = "./alldata"):
     csvFile = open(file, "r")
     if os.path.exists(targetPath)== False:
         os.makedirs(targetPath)
@@ -101,8 +101,14 @@ def copyFile(file = "/Users/hangruicao/Documents/mdp/mdp2021spring/ML_Train/V5_C
     dataframe = pd.DataFrame({'filename':file_name, "numeric_label": numeric_label, "semantic_label": true_label, 
                 "partition" :partition, "Ruma": Ruma, "Nithin":Nithin,"Haomeng": Haomeng,
                 "David":David, "Andrea": Andrea})
-    dataframe.to_csv("label_map.csv")
-    plt.plot
+    dataframe.to_csv("label_map_manipulation.csv")
+    x = dict_cnt.keys()
+    y = dict_cnt.values()
+    plt.hist(y)
+    plt.xlabel('manipulation mode')
+    plt.ylabel('cnt')
+    plt.savefig('manipulation')
+    plt.show()
 
 if __name__ == "__main__":
     print('copy started')

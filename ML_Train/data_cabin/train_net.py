@@ -37,7 +37,6 @@ def save_checkpoint(model, epoch, checkpoint_dir, stats):
 
 def main():
 
-
     tr_loader, va_loader, te_loader, _ =  get_train_val_test_loaders(
         task = "default",
         batch_size = config("net.batch_size")
@@ -46,7 +45,7 @@ def main():
 
     model = Source()
     criterion = torch.nn.CrossEntropyLoss()
-    # learbubg 
+
     optimizer = torch.optim.Adam(model.parameters(), lr = 0.0001)
     print("Number of float-valued parameters:", count_parameters(model))
 

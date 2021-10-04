@@ -159,6 +159,7 @@ def evaluate_epoch(
     include_test=False,
     update_plot=True,
     multiclass=False,
+    probabimode = False
 ):
     """Evaluate the `model` on the train and validation set."""
 
@@ -190,11 +191,12 @@ def evaluate_epoch(
         if not multiclass:
             auroc = metrics.roc_auc_score(y_true, y_score)
         else:
-            auroc = metrics.roc_auc_score(y_true, y_score, multi_class="ovo")
+            auroc = metrics.roc_auc_score(y_true, y_score, multi_class="ovo",labels=[0, 1, 2, 3])
         return acc, loss, auroc
 
     train_acc, train_loss, train_auc = _get_metrics(tr_loader)
     val_acc, val_loss, val_auc = _get_metrics(val_loader)
+    test_acc, test_loss, test_auc = _get_metrics(te_loader)
 
     stats_at_epoch = [
         val_acc,
@@ -203,6 +205,9 @@ def evaluate_epoch(
         train_acc,
         train_loss,
         train_auc,
+        test_acc,
+        test_loss,
+        test_acc,
     ]
     if include_test:
         stats_at_epoch += list(_get_metrics(te_loader))

@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from imageio import imread
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
-FILEPATH = "label_map.csv"
+FILEPATH = "label_map_manipulation.csv"
 PATH = "./alldata/"
 
 def get_train_val_test_loaders(task, batch_size, **kwargs):
