@@ -47,7 +47,7 @@ def main():
 
     filename = "trial"
     lr = 0.0001
-    this_config = dict(csv_file=config["csv_file"], img_path=config["image_path"], learning_rate = lr, num_classes = 4, batchsize = 64)
+    this_config = dict(csv_file=config("csv_file"), img_path=config("image_path"), learning_rate = lr, num_classes = 4, batchsize = 64)
     wandb.init(project = "cabin_train", name = filename, config = this_config)
     print('successfully loading!')
 

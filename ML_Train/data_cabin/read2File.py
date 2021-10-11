@@ -18,7 +18,7 @@ def readCsv(file = "Compile_.csv"):
     return Video_names, video_set
 
 import random 
-def copyFile(file = "/Users/hangruicao/Documents/mdp/mdp2021spring/ML_Train/V5_CabinCoding_CompiledData - Manipulation.csv", targetPath = "./dupdata"):
+def copyFile(file = "V5_CabinCoding_CompiledData - Manipulation.csv", targetPath = "./dupdata"):
     csvFile = open(file, "r")
     if os.path.exists(targetPath)== False:
         os.makedirs(targetPath)
@@ -72,10 +72,11 @@ def copyFile(file = "/Users/hangruicao/Documents/mdp/mdp2021spring/ML_Train/V5_C
                 cnt += 1
                 file_name.append(tname)
                 shutil.copyfile(file_path, new_name)
-
+    print(len(file_name))
     Total_num = len(file_name)
     train_ratio, test_ratio, val_ratio = 0.8, 0.1, 0.1
     train_num = int(train_ratio*Total_num)
+    print('the train num is: ', train_num)
     sample = random.sample(file_name, train_num)
     partition = []
     itr = 0
