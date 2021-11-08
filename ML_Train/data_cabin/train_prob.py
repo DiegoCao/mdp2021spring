@@ -1,17 +1,19 @@
+import pickle
 import torch
 import numpy as np
 import random
+
+from torch.nn.modules.loss import MSELoss
 from dataset import get_train_val_test_loaders
 # from model.target import Target
 from train_common import *
 from utils import config
 import utils
 import wandb
-from model import Source
+from model import ProModel
 SEED = 0
-import pickle
-import os
 
+import os
 
 torch.manual_seed(SEED)
 np.random.seed(SEED)
@@ -51,10 +53,14 @@ def main():
         batch_size = config("net.batch_size")
     )
 
+    
     print('successfully loading!')
 
-    model = Source()
-    criterion = torch.nn.CrossEntropyLoss()
+    model = ProModel()
+    # We can still apply the crossentropy 
+    # criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.MSELoss()
+
 
     optimizer = torch.optim.Adam(model.parameters(), lr = lr)
     print("Number of float-valued parameters:", count_parameters(model))
@@ -62,10 +68,10 @@ def main():
     model, start_epoch, stats = restore_checkpoint(model, config("cnn.checkpoint"))
 
     axes = utils.make_training_plot()
-    prolist = []
+    predictlog = []
 
-    evaluate_epoch(
-        axes, tr_loader, va_loader, te_loader, model, criterion, start_epoch, stats, prolist, multiclass=True
+    evaluate_epoch_pro(
+        axes, tr_loader, va_loader, te_loader, model, criterion, start_epoch, stats,predictlog, multiclass=True
     )
 
         # initial val loss for early stopping
@@ -79,20 +85,23 @@ def main():
     # Loop over the entire dataset multiple times
     # for epoch in range(start_epoch, config('cnn.num_epochs')):
     epoch = start_epoch
-
+    
     lowest_val_loss = 1
     train_auroc = 0
     test_auroc = 0
     lowest_round = epoch
+
     while curr_patience < patience:
+        if (epoch > 100):
+            break
         # Train model
-        train_epoch(tr_loader, model, criterion, optimizer)
+        train_epoch_pro(tr_loader, model, criterion, optimizer)
 
         # Evaluate model
-        evaluate_epoch(
-            axes, tr_loader, va_loader, te_loader, model, criterion, epoch + 1, stats,  prolist, multiclass=True
+        evaluate_epoch_pro(
+            axes, tr_loader, va_loader, te_loader, model, criterion, epoch + 1, stats, predictlog, multiclass=True
         )
-
+        print('the length of pro: ', len(predictlog))
         # Save model parameters
         save_checkpoint(model, epoch + 1, config("net.checkpoint"), stats)
 
@@ -107,7 +116,7 @@ def main():
             lowest_val_loss = prev_val_loss
             lowest_round = epoch
 
-    pickle.dump(prolist, open("base_pro.pck", "wb"))
+    pickle.dump(predictlog, open("predictlog_for_prob.pck", "wb"))
     print("Finished Training")
     # Save figure and keep plot open
     print("the lowest round: ", lowest_round)

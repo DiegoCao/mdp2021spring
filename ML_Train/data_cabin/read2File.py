@@ -29,7 +29,6 @@ def copyFile(file = "V5_CabinCoding_CompiledData - Manipulation.csv", targetPath
 
     reader = csv.reader(csvFile)
     cnt = 0
-    dict_cnt = {}
     labeldict = {}
     labelcnt = 0
    
@@ -92,7 +91,7 @@ def copyFile(file = "V5_CabinCoding_CompiledData - Manipulation.csv", targetPath
 
 
     print('the length', len(file_name), ' ', len(true_label), ' ', len(partition))
-    dataframe = pd.DataFrame({'filename':file_name, "numeric_label": numeric_label, "semantic_label": true_label, 
+    dataframe = pd.DataFrame({'filename':file_name, "numeric_label": true_label, "semantic_label": true_label, 
                 "partition" :partition})
     dataframe.to_csv("duplicate2_manipulation.csv")
     # x = dict_cnt.keys()

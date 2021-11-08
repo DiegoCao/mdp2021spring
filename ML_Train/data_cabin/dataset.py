@@ -6,14 +6,19 @@ import torch
 from matplotlib import pyplot as plt
 from imageio import imread
 from PIL import Image
-from torch.utils.data import Dataset, DataLoader
-FILEPATH = "duplicate2_manipulation.csv"
-PATH = "./dupdata/"
+from torch.utils.data import Dataset, DataLoader 
+from utils import config
+import ast 
+
+
+def from_np_array(array_string):
+    array_string = ','.join(array_string.replace('[ ', '[').split())
+    return np.array(ast.literal_eval(array_string))
 
 def get_train_val_test_loaders(task, batch_size, **kwargs):
 
     tr, va, te, _ = getAlldataset(task = task, **kwargs)
-    tr_loader = DataLoader(tr, batch_size = batch_size, shuffle= True)
+    tr_loader = DataLoader(tr, batch_size = batch_size, shuffle= False)
     va_loader = DataLoader(va, batch_size = batch_size, shuffle= False)
     te_loader = DataLoader(te, batch_size=batch_size, shuffle=False)
 
@@ -33,7 +38,6 @@ def getAlldataset(task = "default", **kwargs):
     te.X = standardizer.transform(te.X)
 
     tr.X = tr.X.transpose(0, 3, 1, 2)
-    print(tr.X.shape)
     va.X = va.X.transpose(0, 3, 1, 2)
     te.X = te.X.transpose(0, 3, 1, 2)
 
@@ -87,14 +91,15 @@ class CabinsDataset(Dataset):
         if partition not in ["train", "val", "test"]:
             raise ValueError("Partition {} does not exist".format(partition))
 
-            
+        FILEPATH = config("csv_file")
+        self.PATH = config("image_path")
         seed = 0
         np.random.seed(seed) # set the seed for random
         torch.manual_seed(seed)
         random.seed = seed 
         self.task = task
         self.partition = partition
-        self.metadata = pd.read_csv(FILEPATH)
+        self.metadata = pd.read_csv(FILEPATH, converters={'numeric_label':from_np_array})
         self.augment = augment
 
         
@@ -115,13 +120,27 @@ class CabinsDataset(Dataset):
             load_data from memory
         '''
         print("loading %s..." % self.partition)
+        
         df = self.metadata[self.metadata.partition == self.partition]
+
         X, y = [], []
         for i, row in df.iterrows():
-            label = row["numeric_label"]
-            image = imread(os.path.join(PATH, str(row["filename"])))
+            # if config("promode") == True:
+            #     label = from_np_array(row["numeric_label"])
+            # else:
+            #     label  = row["numeric_label"]
+            label = from_np_array(row["numeric_label"])
+            if np.count_nonzero(label) > 1:
+                print(label)
+            
+            image = imread(os.path.join(self.PATH, str(row["filename"])))
+        
+            if config("promode")== True and sum(label) < 1:
+                print('error')
+                exit(1)
             X.append(image)
             y.append(label)
+
 
 
         return np.array(X), np.array(y)
@@ -132,7 +151,8 @@ class CabinsDataset(Dataset):
     
     def __getitem__(self, idx):
         """Return (image, label) pair at index `idx` of dataset."""
-        return torch.from_numpy(self.X[idx]).float(), torch.tensor(self.y[idx]).long()
+        # Fix: fix the return float, the return can be only float item 
+        return torch.from_numpy(self.X[idx]).float(), torch.tensor(self.y[idx]).float()
 
     def get_numeric_label(self):
         return self.y
